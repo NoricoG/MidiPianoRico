@@ -23,31 +23,6 @@ namespace MidiPianoRico
             LoadPages();
         }
 
-        private void MetronomeTimer_Tick(object sender, EventArgs e)
-        {
-            Console.Beep(500, 200);
-        }
-
-        private void MetronomeButton_Click(object sender, EventArgs e)
-        {
-            if (metronomeTimer.Enabled)
-            {
-                metronomeTimer.Enabled = false;
-                metronomeButton.Text = "Start";
-            }
-            else
-            {
-                metronomeTimer.Interval = (int ) (1 / (float.Parse(metronomeComboBox.SelectedText) / 60) * 1000);
-                metronomeTimer.Enabled = true;
-                metronomeButton.Text = "Stop";
-            }
-        }
-
-        private void LaunchPlayerButton_Click(object sender, EventArgs e)
-        {
-            LaunchPlayer();
-        }
-
         private void AddFolderButton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
@@ -64,25 +39,12 @@ namespace MidiPianoRico
             }
         }
 
-        private void ChangePlayerButton_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog dialog = new OpenFileDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                settings.playerPath = dialog.FileName;
-            }
-            else
-            {
-                MessageBox.Show("No new player is selected");
-            }
-        }
-
         private void ChangeInputButton_Click(object sender, EventArgs e)
         {
             InputDeviceDialog dialog = new InputDeviceDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                hUIKeyboardHandler = new HUIKeyboardHandler(this, dialog.InputDeviceID);
+                keyboardHandler = new KeyboardHandler(this, dialog.InputDeviceID);
             }
             else
             {
@@ -111,10 +73,6 @@ namespace MidiPianoRico
                 exitPressed = false;
                 exitPressedLabel.Hide();
                 pictureBox.Show();
-            }
-            else
-            {
-                LaunchPlayer();
             }
         }
 

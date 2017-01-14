@@ -1,58 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using System.Drawing;
-using Sanford.Multimedia.Midi.UI;
-using System.Diagnostics;
 
 /*
 TODO:
-    Open picture in folder
-    Show note help
-    Remember latest category and song
-    Handle multiple pages
-    
-Maybe:
-    Output with low latency witouth VMPK
-    Open, draw and play midi file
+    Code improvement
+    Open, draw and play midi file using alphaTab or MusicXML and LilyPond
 */
 
 namespace MidiPianoRico
 {
     partial class Home : Form
     {
-        private HUIKeyboardHandler hUIKeyboardHandler;
+        private KeyboardHandler keyboardHandler;
+        private ButtonsHandler buttonsHandler;
         public PictureBox pictureBox;
         private Settings settings;
 
-        private ToolStripComboBox folderComboBox, songComboBox, metronomeComboBox;
+        private ToolStripComboBox folderComboBox, songComboBox;
         private Label folderSwitchingLabel, exitPressedLabel;
-        private ToolStripButton metronomeButton;
 
         private Bitmap[] pages;
         private int currentPage = 1;
         private bool folderSwitching = false;
         private bool exitPressed = false;
         private bool playerLaunched = false;
-        private Timer metronomeTimer;
         
         public Home()
         {
             Text = "MidiPianoRico";
-            hUIKeyboardHandler = new HUIKeyboardHandler(this, 1);
+            //keyboardHandler = new KeyboardHandler(this, 1);
+            keyboardHandler = new KeyboardHandler(this, 1);
+            buttonsHandler = new ButtonsHandler(this, 2);
             settings = FileHandler.LoadSettings();
-            Load += Home_Load;
             SetSize();
             AddControls();
-
-            metronomeTimer = new Timer();
-            metronomeTimer.Tick += MetronomeTimer_Tick;
         }
-
-
 
         private void SetSize()
         {
@@ -92,42 +74,10 @@ namespace MidiPianoRico
 
             toolStrip.Items.Add(new ToolStripSeparator());
 
-            ToolStripLabel metronomeLabel = new ToolStripLabel();
-            songLabel.Text = "Metronome";
-            toolStrip.Items.Add(metronomeLabel);
-
-            metronomeComboBox = new ToolStripComboBox();
-            metronomeComboBox.Items.Add("30");
-            metronomeComboBox.Items.Add("40");
-            metronomeComboBox.Items.Add("50");
-            metronomeComboBox.Items.Add("60");
-            metronomeComboBox.Items.Add("70");
-            metronomeComboBox.Items.Add("80");
-            metronomeComboBox.Items.Add("90");
-            metronomeComboBox.Items.Add("100");
-            toolStrip.Items.Add(metronomeComboBox);
-
-            metronomeButton = new ToolStripButton();
-            metronomeButton.Text = "Start";
-            metronomeButton.Click += MetronomeButton_Click;
-            toolStrip.Items.Add(metronomeButton);
-
-            toolStrip.Items.Add(new ToolStripSeparator());
-
-            ToolStripButton launchPlayerButton = new ToolStripButton();
-            launchPlayerButton.Text = "Launch player";
-            launchPlayerButton.Click += LaunchPlayerButton_Click;
-            toolStrip.Items.Add(launchPlayerButton);
-
             ToolStripButton addFolderButton = new ToolStripButton();
             addFolderButton.Text = "Add folder";
             addFolderButton.Click += AddFolderButton_Click;
             toolStrip.Items.Add(addFolderButton);
-
-            ToolStripButton changePlayerButton = new ToolStripButton();
-            changePlayerButton.Text = "Change player";
-            changePlayerButton.Click += ChangePlayerButton_Click;
-            toolStrip.Items.Add(changePlayerButton);
 
             ToolStripButton changeInputButton = new ToolStripButton();
             changeInputButton.Text = "Change input";

@@ -50,14 +50,6 @@ namespace MidiPianoRico
             comboBox.DropDownWidth = maxWidth;
         }
 
-        private void Home_Load(object sender, EventArgs e)
-        {
-            if (!playerLaunched)
-            {
-                LaunchPlayer();
-            }
-        }
-
         private void LoadPages()
         {
             if (folderComboBox.Items.Count > 0)
@@ -96,18 +88,6 @@ namespace MidiPianoRico
             if (currentPage > 0)
                 currentPage--;
             ShowPage();
-        }
-
-        private void LaunchPlayer()
-        {
-            try
-            {
-                System.Diagnostics.Process.Start(settings.playerPath);
-            }
-            catch
-            {
-                MessageBox.Show("No player selected");
-            }
         }
     }
 }

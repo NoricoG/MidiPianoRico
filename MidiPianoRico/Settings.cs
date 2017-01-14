@@ -10,7 +10,6 @@ namespace MidiPianoRico
 {
     class Settings
     {
-        public string playerPath = "C:/Program Files (x86)/vmpk/vmpk.exe";
         public int inputID = 1;
         public List<string> folderPaths = new List<string>();
 
@@ -23,11 +22,10 @@ namespace MidiPianoRico
         {
             try
             {
-                playerPath = lines[0];
-                inputID = int.Parse(lines[1]);
-                if (lines.Count > 2)
+                inputID = int.Parse(lines[0]);
+                if (lines.Count > 1)
                 {
-                    for (int i = 2; i < lines.Count; i++)
+                    for (int i = 1; i < lines.Count; i++)
                     {
                         if (Directory.Exists(lines[i]))
                         {
@@ -50,7 +48,6 @@ namespace MidiPianoRico
         public List<string> ToLines()
         {
             List<string> lines = new List<string>();
-            lines.Add(playerPath);
             lines.Add(inputID.ToString());
             if (folderPaths.Count > 0)
             {

@@ -12,15 +12,15 @@ using System.Windows.Forms;
 
 namespace MidiPianoRico
 {
-    class HUIKeyboardHandler
+    abstract class InputHandler
     {
-        private const int SysExBufferSize = 128;
-        private InputDevice inDevice = null;
-        private SynchronizationContext context;
+        protected const int SysExBufferSize = 128;
+        protected InputDevice inDevice = null;
+        protected SynchronizationContext context;
 
-        private Home home;
+        protected Home home;
 
-        public HUIKeyboardHandler(Home home, int inputDeviceID)
+        public InputHandler(Home home, int inputDeviceID)
         {
             this.home = home;
 
@@ -49,7 +49,32 @@ namespace MidiPianoRico
             inDevice.Close();
         }
 
-        private void HandleChannelMessageReceived(object sender, ChannelMessageEventArgs e)
+        protected abstract void HandleChannelMessageReceived(object sender, ChannelMessageEventArgs e);
+    }
+
+    class KeyboardHandler : InputHandler
+    {
+        private OutputDevice outDevice;
+
+        public KeyboardHandler(Home home, int inputDeviceID, int outputDeviceID = 0) : base(home, inputDeviceID)
+        {
+            outDevice = new OutputDevice(outputDeviceID);
+        }
+
+        protected override void HandleChannelMessageReceived(object sender, ChannelMessageEventArgs e)
+        {
+            context.Post(delegate (object dummy)
+            {
+                outDevice.Send(e.Message);
+            }, null);
+        }
+    }
+
+    class ButtonsHandler : InputHandler
+    {
+        public ButtonsHandler(Home home, int inputDeviceID) : base(home, inputDeviceID) { }
+
+        protected override void HandleChannelMessageReceived(object sender, ChannelMessageEventArgs e)
         {
             context.Post(delegate (object dummy)
             {
